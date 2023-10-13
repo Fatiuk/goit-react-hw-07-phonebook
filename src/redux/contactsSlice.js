@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+// Immutable Updates with Immer
+import produce from 'immer';
 
 export const contactInitialState = {
   items: [
@@ -24,7 +26,12 @@ const contactsSlice = createSlice({
       }
     },
     deleteContact: (state, action) => {
-      return state.filter(contact => contact.id !== action.payload);
+      // Immutable Updates with Immer
+      return produce(state, draftState => {
+        draftState.items = draftState.items.filter(
+          contact => contact.id !== action.payload
+        );
+      });
     },
   },
 });
