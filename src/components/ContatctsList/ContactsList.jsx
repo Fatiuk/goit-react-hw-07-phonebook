@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import AtomicSpinner from 'atomic-spinner';
 import { getContacts, getFilter } from 'redux/selectors';
 import {
   ContactListWrap,
@@ -27,8 +28,8 @@ const ContactList = () => {
 
   return (
     <ContactListWrap>
-      {isLoading && <b>Loading tasks...</b>}
-      {items && (
+      {isLoading && <AtomicSpinner />}
+      {items && !isLoading && (
         <PhonebookList>
           {filteredContacts.map(contact => (
             <PhonebookItem key={contact.id}>
