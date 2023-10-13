@@ -6,14 +6,14 @@ import {
   ContactDeleteBtn,
 } from './ContactsItem.styled';
 
-function ContactsItem({ contact: { name, number, id } }) {
+function ContactsItem({ contact: { name, phone, id } }) {
   const dispatch = useDispatch();
   const handleDelete = () => dispatch(deleteContact(id));
 
   return (
     <>
       <ContactSpan>{name}</ContactSpan>
-      <ContactLink href={`tel:${number}`}>{number}</ContactLink>
+      <ContactLink href={`tel:${phone}`}>{phone}</ContactLink>
       <ContactDeleteBtn type="button" onClick={handleDelete}>
         Delete
       </ContactDeleteBtn>

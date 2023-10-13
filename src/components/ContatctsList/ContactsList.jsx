@@ -1,4 +1,5 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { getContacts, getFilter } from 'redux/selectors';
 import {
   ContactListWrap,
@@ -6,8 +7,15 @@ import {
   PhonebookItem,
 } from './ContactsList.styled';
 import ContactsItem from 'components/ContactsItem/ContactsItem';
+import { fetchContacts } from 'redux/operations';
 
 const ContactList = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   const contacts = useSelector(getContacts);
   const filter = useSelector(getFilter);
 
