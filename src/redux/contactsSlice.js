@@ -13,14 +13,6 @@ const contactsSlice = createSlice({
   name: 'contacts',
   initialState: contactInitialState,
   reducers: {
-    // addContact: ({ items }, action) => {
-    //   const isExist = items.some(
-    //     contact => contact.name === action.payload.name
-    //   );
-    //   if (!isExist) {
-    //     items.push(action.payload);
-    //   }
-    // },
     deleteContact: (state, action) => {
       // Immutable Updates with Immer
       return produce(state, draftState => {
