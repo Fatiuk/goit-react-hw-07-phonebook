@@ -16,24 +16,28 @@ const ContactList = () => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
-  const contacts = useSelector(getContacts);
+  const { items, isLoading, error } = useSelector(getContacts);
   const filter = useSelector(getFilter);
 
   const filteredContacts = filter
-    ? contacts.filter(contact =>
+    ? items.filter(contact =>
         contact.name.toLowerCase().includes(filter.toLowerCase())
       )
-    : contacts;
+    : items;
 
   return (
     <ContactListWrap>
-      <PhonebookList>
-        {filteredContacts.map(contact => (
-          <PhonebookItem key={contact.id}>
-            <ContactsItem contact={contact}></ContactsItem>
-          </PhonebookItem>
-        ))}
-      </PhonebookList>
+      {isLoading && <b>Loading tasks...</b>}
+      {items && (
+        <PhonebookList>
+          {filteredContacts.map(contact => (
+            <PhonebookItem key={contact.id}>
+              <ContactsItem contact={contact}></ContactsItem>
+            </PhonebookItem>
+          ))}
+        </PhonebookList>
+      )}
+      {error && <b>{error}</b>}
     </ContactListWrap>
   );
 };

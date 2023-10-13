@@ -4,7 +4,7 @@ import { fetchContacts } from './operations';
 import produce from 'immer';
 
 export const contactInitialState = {
-  items: [],
+  items: null,
   isLoading: false,
   error: null,
 };
