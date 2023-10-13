@@ -1,7 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchContacts, addContact } from './operations';
-// Immutable Updates with Immer
-import produce from 'immer';
+import { fetchContacts, addContact, deleteContact } from './operations';
 
 export const contactInitialState = {
   items: null,
@@ -17,37 +15,43 @@ const handleRejected = (state, { payload }) => {
   state.error = payload;
 };
 
+const handleFulfieldGetAllContacts = (state, { payload }) => {
+  state.isLoading = false;
+  state.items = payload;
+};
+
+const handleFulfieldAddContact = (state, { payload }) => {
+  state.isLoading = false;
+  state.items.push(payload);
+};
+
+const handleFulfieldDeleteContact = (state, { payload }) => {
+  const index = state.items.findIndex(contact => contact.id === payload);
+  state.isLoading = false;
+  state.items.splice(index, 1);
+};
+
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: contactInitialState,
-  reducers: {
-    deleteContact: (state, action) => {
-      // Immutable Updates with Immer
-      return produce(state, draftState => {
-        draftState.items = draftState.items.filter(
-          contact => contact.id !== action.payload
-        );
-      });
-    },
-  },
   extraReducers: builder => {
     builder
-      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.items = payload;
-      })
-      .addCase(addContact.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.items.push(payload);
-      })
-      .addMatcher(action => {
-        action.endsWith('/pending');
-      }, handlePending)
-      .addMatcher(action => {
-        action.endsWith('/rejected');
-      }, handleRejected);
+      .addCase(fetchContacts.fulfilled, handleFulfieldGetAllContacts)
+      .addCase(addContact.fulfilled, handleFulfieldAddContact)
+      .addCase(deleteContact.fulfilled, handleFulfieldDeleteContact)
+      .addMatcher(
+        action => action.type.endsWith('/pending'),
+        state => {
+          handlePending(state);
+        }
+      )
+      .addMatcher(
+        action => action.type.endsWith('/rejected'),
+        (state, action) => {
+          handleRejected(state, action.payload);
+        }
+      );
   },
 });
 
-export const { deleteContact } = contactsSlice.actions;
 export const contactsReducer = contactsSlice.reducer;
