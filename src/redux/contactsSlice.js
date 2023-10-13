@@ -9,6 +9,14 @@ export const contactInitialState = {
   error: null,
 };
 
+const handlePending = state => {
+  state.isLoading = true;
+};
+const handleRejected = (state, { payload }) => {
+  state.isLoading = false;
+  state.error = payload;
+};
+
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: contactInitialState,
@@ -22,31 +30,22 @@ const contactsSlice = createSlice({
       });
     },
   },
-  extraReducers: {
-    [fetchContacts.pending](state) {
-      state.isLoading = true;
-    },
-    [fetchContacts.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items = action.payload;
-    },
-    [fetchContacts.rejected](state, action) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    [addContact.pending](state) {
-      state.isLoading = true;
-    },
-    [addContact.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items.push(action.payload);
-    },
-    [addContact.rejected](state, action) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.items = payload;
+      })
+      .addCase(addContact.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.items.push(payload);
+      })
+      .addMatcher(action => {
+        action.endsWith('/pending');
+      }, handlePending)
+      .addMatcher(action => {
+        action.endsWith('/rejected');
+      }, handleRejected);
   },
 });
 
