@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchContacts } from './operations';
+import { fetchContacts, addContact } from './operations';
 // Immutable Updates with Immer
 import produce from 'immer';
 
@@ -13,14 +13,14 @@ const contactsSlice = createSlice({
   name: 'contacts',
   initialState: contactInitialState,
   reducers: {
-    addContact: ({ items }, action) => {
-      const isExist = items.some(
-        contact => contact.name === action.payload.name
-      );
-      if (!isExist) {
-        items.push(action.payload);
-      }
-    },
+    // addContact: ({ items }, action) => {
+    //   const isExist = items.some(
+    //     contact => contact.name === action.payload.name
+    //   );
+    //   if (!isExist) {
+    //     items.push(action.payload);
+    //   }
+    // },
     deleteContact: (state, action) => {
       // Immutable Updates with Immer
       return produce(state, draftState => {
@@ -43,8 +43,20 @@ const contactsSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
+    [addContact.pending](state) {
+      state.isLoading = true;
+    },
+    [addContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items.push(action.payload);
+    },
+    [addContact.rejected](state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { addContact, deleteContact } = contactsSlice.actions;
+export const { deleteContact } = contactsSlice.actions;
 export const contactsReducer = contactsSlice.reducer;
